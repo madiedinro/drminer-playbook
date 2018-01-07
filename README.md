@@ -1,11 +1,12 @@
 Ansible playbook, чтобы развернуть на сервере Ubuntu майнер, который будет монетизировать свободные процессорные ресурсы. Майнит Monreo, где как раз не нужно GPU. 
 Идеально для установки на серваках, где простаивает процессор.
 
-# Запуск скрипты установки 
+## Сетап 
 
 
     ANSIBLE_HOST_KEY_CHECKING=false \
-      ansible-playbook drminer.yml -i inventories/name
+      ansible-playbook drminer.yml \
+      -i inventories/filename
       
     
 Опционально выполнить или исключить группы задач 
