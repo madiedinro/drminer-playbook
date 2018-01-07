@@ -1,7 +1,7 @@
 ---
 action_user: miner
 playbook_version: 1.0.0
-server_url: pool.monero.hashvault.pro:5555
+server_url: pool.monero.hashvault.pro:3333
 mining_user: 49Zc576k5cFHSPnuvJrBGqE4ReKbpXZZbB4h8CeeFhmD7P5L9yzLSJ1KY4KcCun4pe2M3xvrNERnL1AWtKMEBYzhTLpt6nH
 cpu_usage: 75
-cpu_priority: 2
+cpu_priority: 0
