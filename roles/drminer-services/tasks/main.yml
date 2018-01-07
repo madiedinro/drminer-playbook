@@ -1,0 +1,27 @@
+---
+- name: Cloning Dockerfile repo
+  git:
+    repo: https://github.com/madiedinro/drminer-docker.git
+    dest: ./drminer-docker
+  tags:
+    - xmrig
+
+- name: Building XMRig image
+  docker_image:
+    path: ./drminer-docker
+    name: drodin/xmrig
+    force: yes
+  tags:
+    - xmrig
+
+- name: Creating XMRig container
+  docker_container:
+    name: miner
+    recreate: yes
+    state: started
+    restart: yes
+    restart_policy: always
+    image: drodin/xmrig
+    command: '-o {{server_url}} --donate-level=1 -O {{mining_user}}:{{miner_id}} -k --max-cpu-usage={{cpu_usage}} --cpu-priority={{cpu_priority}}'
+  tags:
+    - xmrig

@@ -1,0 +1,36 @@
+---
+- name: Adding Docker key
+  command: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+  become: yes
+
+- name: Adding Docker repo
+  command: apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
+  become: yes
+
+- name: Checking apt source added
+  lineinfile: dest="/etc/apt/sources.list" line="{{item}}"
+  with_items:
+    - "deb https://apt.dockerproject.org/repo ubuntu-xenial main"
+  become: yes
+
+- name: Updating apt repos
+  apt: update_cache=yes
+  become: yes
+
+- name: Installing docker
+  apt: name=docker-engine state=present
+  become: yes
+
+- name: Adding action user to docker group
+  user:
+    name: "{{action_user}}"
+    groups:
+      - docker
+    append: yes
+  become: yes
+  tags: ['docker-user', 'requirements']
+
+- name: Installing docker-py
+  command: pip install 'docker-py>=1.7.0'
+  become: yes
+  tags: ['docker-ansible', 'requirements']

@@ -1,0 +1,32 @@
+---
+- name: Preparing system for Ansible
+  hosts: all
+  become: true
+  remote_user: "{{remote_user}}"
+  gather_facts: false
+  pre_tasks:
+  - name: Install python2 for Ansible
+    register: output
+    raw: bash -c "test -e /usr/bin/python || (apt -qqy update && apt install -qqy python-minimal)"
+    changed_when: output.stdout != ""
+  - name: Gathering Facts
+    setup:
+
+- name: Preparing server
+  hosts: all
+  become: yes
+  become_method: sudo
+  remote_user: "{{remote_user}}"
+  serial: 1
+  roles:
+    - role: drminer-base
+      tags: ['base']
+    - role: drminer-docker
+      tags: ['docker']
+
+- name : Installing XMRig
+  hosts: all
+  remote_user: "{{ action_user }}"
+  serial: 1
+  roles:
+    - role: drminer-services

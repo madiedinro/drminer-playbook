@@ -1,0 +1,68 @@
+---
+- shell: apt-get clean
+  become: yes
+  tags: ['requirements']
+
+- shell: apt-get update
+  become: yes
+  tags: ['requirements']
+
+- name: Dependencies
+  apt: name={{ item }} state=present
+  with_items:
+    - python-dev
+    - git
+    - python-pip
+    - gzip
+    - unzip
+    - curl
+    - wget
+    - software-properties-common
+    - apt-transport-https
+    - htop
+    - dstat
+    - python-setuptools
+  tags: ['requirements']
+
+- name: Locale
+  locale_gen:
+    name: en_US.UTF-8
+    state: present
+  become: yes
+  tags: ['requirements']
+
+- name: Updating locale
+  command: update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+  become: yes
+  tags: ['requirements']
+
+- name: Set timezone to UTC
+  timezone:
+    name: Etc/UTC
+  become: yes
+  tags: ['requirements']
+
+- name: Installing ntp
+  apt: name=ntp state=present
+  become: yes
+  tags: ['requirements']
+
+- name: Creating alco user
+  user: name={{action_user}} groups=sudo shell=/bin/bash password={{action_user_pw | password_hash('sha512') }}
+  become: yes
+  tags: ['requirements']
+
+- name: Updating sudoers
+  lineinfile:
+    path: /etc/sudoers
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+  become: yes
+  tags: ['requirements']
+
+- name: Set authorized key took from file
+  authorized_key:
+    user: "{{action_user}}"
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  tags: ['requirements']
